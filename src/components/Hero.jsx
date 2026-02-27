@@ -38,7 +38,7 @@ export default function Hero() {
           heights and passionate about startups.
         </p>
 
-        {/* Search Box */}
+       
         <div className="bg-white p-4 lg:p-2 shadow-xl rounded-lg flex flex-col lg:flex-row gap-4 lg:gap-2 border border-slate-100 max-w-2xl w-full">
           <div className="flex items-center w-full pb-2 lg:pb-0 border-b lg:border-b-0 lg:border-r border-slate-200 px-2">
             <Search className="w-5 h-5 text-slate-400 mr-2 shrink-0" />
