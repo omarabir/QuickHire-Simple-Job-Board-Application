@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Companies from "../components/Companies";
 import Category from "../components/Category";
+import FeaturedJobs from "../components/FeaturedJobs";
 import StartPosting from "../components/StartPosting";
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
       <Companies />
       <Category />
       <StartPosting />
+      <FeaturedJobs />
     </div>
   );
 }
