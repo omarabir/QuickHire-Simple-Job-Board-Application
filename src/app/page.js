@@ -4,7 +4,9 @@ import Hero from "../components/Hero";
 import Companies from "../components/Companies";
 import Category from "../components/Category";
 import FeaturedJobs from "../components/FeaturedJobs";
+import LatestJobs from "../components/LatestJobs";
 import StartPosting from "../components/StartPosting";
+import Footer from "../components/Footer";
 
 export default function Home() {
   return (
@@ -31,8 +33,10 @@ export default function Home() {
 
       <Companies />
       <Category />
-      <StartPosting />
       <FeaturedJobs />
+      <StartPosting />
+      <LatestJobs />
+      <Footer />
     </div>
   );
 }
