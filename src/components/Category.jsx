@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  PenTool,
+  PencilRuler,
   BarChart3,
   Megaphone,
   Wallet,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { name: "Design", jobs: 235, icon: PenTool },
+  { name: "Design", jobs: 235, icon: PencilRuler },
   { name: "Sales", jobs: 756, icon: BarChart3 },
   { name: "Marketing", jobs: 140, icon: Megaphone },
   { name: "Finance", jobs: 325, icon: Wallet },

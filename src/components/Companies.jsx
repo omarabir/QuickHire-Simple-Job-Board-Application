@@ -10,7 +10,7 @@ const companies = [
 
 export default function Companies() {
   return (
-    <div className="w-full mx-auto   bg-white px-16 py-4 ">
+    <div className="w-full mx-auto   bg-white px-26 py-4 ">
       <p className="text-gray-400 text-lg font-medium mb-6">
         Companies we helped grow
       </p>

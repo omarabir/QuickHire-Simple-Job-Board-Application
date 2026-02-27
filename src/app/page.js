@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Companies from "../components/Companies";
 import Category from "../components/Category";
+import StartPosting from "../components/StartPosting";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
 
       <Companies />
       <Category />
+      <StartPosting />
     </div>
   );
 }
