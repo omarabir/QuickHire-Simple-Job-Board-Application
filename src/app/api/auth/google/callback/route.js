@@ -6,28 +6,42 @@ import { signToken } from "@/lib/serverAuth";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = (
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ).trim();
 
   if (!code) {
-    return NextResponse.redirect(`${appUrl}/login?error=google_failed`);
+    return NextResponse.redirect(
+      `${appUrl}/login?error=google_failed&reason=no_code`,
+    );
   }
 
   try {
+    const clientId = (process.env.GOOGLE_CLIENT_ID || "").trim();
+    const clientSecret = (process.env.GOOGLE_CLIENT_SECRET || "").trim();
+    const redirectUri = `${appUrl}/api/auth/google/callback`;
+
     // 1️⃣ Exchange code for tokens
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${appUrl}/api/auth/google/callback`,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
         grant_type: "authorization_code",
       }),
     });
     const tokens = await tokenRes.json();
-    if (!tokenRes.ok)
-      throw new Error(tokens.error_description || "Token exchange failed");
+    if (!tokenRes.ok) {
+      const reason = encodeURIComponent(
+        tokens.error_description || tokens.error || "token_exchange_failed",
+      );
+      return NextResponse.redirect(
+        `${appUrl}/login?error=google_failed&reason=${reason}`,
+      );
+    }
 
     // 2️⃣ Get user info from Google
     const profileRes = await fetch(
@@ -76,6 +90,9 @@ export async function GET(request) {
     );
   } catch (err) {
     console.error("Google OAuth error:", err.message);
-    return NextResponse.redirect(`${appUrl}/login?error=google_failed`);
+    const reason = encodeURIComponent(err.message || "unknown");
+    return NextResponse.redirect(
+      `${appUrl}/login?error=google_failed&reason=${reason}`,
+    );
   }
 }

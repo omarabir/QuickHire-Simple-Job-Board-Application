@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { login, saveAuth } from "@/lib/api";
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -17,6 +18,14 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
+
+  // Show Google OAuth error from URL ?error=google_failed&reason=...
+  useEffect(() => {
+    if (searchParams.get("error") === "google_failed") {
+      const reason = searchParams.get("reason") || "unknown error";
+      setServerError(`Google login failed: ${decodeURIComponent(reason)}`);
+    }
+  }, [searchParams]);
 
   const validate = () => {
     const e = {};
