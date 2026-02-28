@@ -195,7 +195,7 @@ export default function Login() {
 
           <div className="mx-auto flex justify-center">
             <a
-              href={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:5000"}/api/auth/google`}
+              href="/api/auth/google"
               className="flex items-center justify-center gap-2 border border-slate-300 bg-white py-3 px-5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition w-full"
             >
               <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">

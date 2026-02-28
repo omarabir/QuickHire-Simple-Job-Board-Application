@@ -1,4 +1,5 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+// Uses Next.js API routes — works locally and on Vercel with no extra config
+const BASE_URL = "/api";
 
 async function request(path, options = {}) {
   const token =
