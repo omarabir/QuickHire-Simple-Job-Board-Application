@@ -1,11 +1,14 @@
-import { sign, verify } from "jsonwebtoken";
+import { createRequire } from "module";
 import { NextResponse } from "next/server";
+
+const require = createRequire(import.meta.url);
+const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "quickhire_secret_key";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 
 export function signToken(user) {
-  return sign(
+  return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES },
@@ -26,7 +29,7 @@ export function verifyToken(request) {
     );
   }
   try {
-    return verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET);
   } catch {
     throw NextResponse.json(
       { success: false, message: "Invalid or expired token" },
