@@ -1,5 +1,11 @@
 # QuickHire
 
+**Live Demo:** [https://quick-hire-dun-three.vercel.app](https://quick-hire-dun-three.vercel.app)
+
+**Admin Credentials:**
+- **Email:** `quickhireadmin@gmail.com`
+- **Password:** `adminadmin123`
+
 A full-stack job-board application built with **Next.js**, **Node/Express**, and **MongoDB**.
 
 ---
@@ -8,16 +14,9 @@ A full-stack job-board application built with **Next.js**, **Node/Express**, and
 
 ```
 QuickHire/
-├── backend/                # Express REST API
-│   ├── models/             # Mongoose models (Job, Application)
-│   ├── routes/             # Route handlers (jobs, applications)
-│   ├── middleware/         # Validation helpers
-│   ├── server.js           # Entry point
-│   ├── .env                # Environment variables (not committed)
-│   └── package.json
-│
 ├── src/
 │   ├── app/
+│   │   ├── api/            # Next.js Serverless API routes
 │   │   ├── jobs/           # Job listings page  (/jobs)
 │   │   ├── jobs/[id]/      # Job detail + apply page  (/jobs/:id)
 │   │   ├── admin/          # Admin dashboard  (/admin)
@@ -28,8 +27,10 @@ QuickHire/
 │   │   ├── authPage/       # login.jsx, signUp.jsx
 │   │   └── ...             # Header, Hero, Footer, etc.
 │   └── lib/
-│       └── api.js          # Fetch helpers for all API calls
-└── .env.local              # NEXT_PUBLIC_API_URL
+│       ├── models/         # Mongoose models (User, Job, Application)
+│       ├── db.js           # Database connection file
+│       └── serverAuth.js   # JWT authentication utilities
+└── .env                    # Application environment variables
 ```
 
 ---
@@ -44,43 +45,28 @@ QuickHire/
 
 ## Getting Started
 
-### 1. Clone the repo
+### Setup Instructions
 
 ```bash
 git clone https://github.com/omarabir/QuickHire-Simple-Job-Board-Application
 cd QuickHire
-```
-
-### 2. Backend setup
-
-```bash
-cd backend
-cp .env.example .env    # edit values if needed
 npm install
-npm run dev             # starts on http://localhost:5000
+npm run dev
 ```
 
-#### Backend environment variables (backend/.env)
+#### Environment Variables (.env)
 
-| Variable   | Default                               | Description         |
-|------------|---------------------------------------|---------------------|
-| PORT       | 5000                                  | Express server port |
-| MONGO_URI  | mongodb://127.0.0.1:27017/quickhire   | MongoDB connection  |
-| CLIENT_URL | http://localhost:3000                 | CORS allowed origin |
+Create a `.env` file in the root of your project:
 
-### 3. Frontend setup
-
-```bash
-# from repo root
-npm install
-npm run dev             # starts on http://localhost:3000
+```env
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/quickhire
+JWT_SECRET=super_secret_string
+JWT_EXPIRES=7d
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
-
-#### Frontend environment variables (.env.local)
-
-| Variable            | Default                     | Description          |
-|---------------------|-----------------------------|----------------------|
-| NEXT_PUBLIC_API_URL | http://localhost:5000/api   | Backend API base URL |
 
 ---
 
