@@ -1,8 +1,79 @@
-'use client";';
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { register, saveAuth } from "@/lib/api";
 
 export default function SignUp() {
+  const router = useRouter();
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    terms: false,
+  });
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
+
+  const validate = () => {
+    const e = {};
+    if (!form.firstName.trim()) e.firstName = "First name is required.";
+    if (!form.lastName.trim()) e.lastName = "Last name is required.";
+    if (!form.email.trim()) e.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      e.email = "Enter a valid email address.";
+    if (!form.password) e.password = "Password is required.";
+    else if (form.password.length < 6)
+      e.password = "Password must be at least 6 characters.";
+    if (!form.terms) e.terms = "You must agree to the terms.";
+    return e;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setServerError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validation = validate();
+    if (Object.keys(validation).length) {
+      setErrors(validation);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await register({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        password: form.password,
+      });
+      saveAuth(res.token, res.user);
+      router.push("/");
+    } catch (err) {
+      if (err?.errors) {
+        setErrors(err.errors);
+      } else {
+        setServerError(
+          err?.message || "Something went wrong. Please try again.",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F8FD] flex">
       <div className="hidden lg:flex flex-1 bg-blue-600 relative overflow-hidden flex-col justify-between p-14">
@@ -21,7 +92,6 @@ export default function SignUp() {
             alt="QuickHire"
             width={36}
             height={36}
-          
           />
           <span className="text-xl font-bold font-display text-white">
             QuickHire
@@ -39,9 +109,7 @@ export default function SignUp() {
           </p>
         </div>
 
-        <div className="relative z-10">
-          
-        </div>
+        <div className="relative z-10"></div>
       </div>
 
       <div className="flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12">
@@ -71,7 +139,13 @@ export default function SignUp() {
             </Link>
           </p>
 
-          <form className="space-y-5">
+          {serverError && (
+            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm">
+              {serverError}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -79,9 +153,21 @@ export default function SignUp() {
                 </label>
                 <input
                   type="text"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={handleChange}
                   placeholder="First name"
-                  className="w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  className={`w-full border bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-blue-100 transition ${
+                    errors.firstName
+                      ? "border-red-400"
+                      : "border-slate-300 focus:border-blue-500"
+                  }`}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -89,9 +175,19 @@ export default function SignUp() {
                 </label>
                 <input
                   type="text"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={handleChange}
                   placeholder="Last name"
-                  className="w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  className={`w-full border bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-blue-100 transition ${
+                    errors.lastName
+                      ? "border-red-400"
+                      : "border-slate-300 focus:border-blue-500"
+                  }`}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
+                )}
               </div>
             </div>
 
@@ -101,54 +197,97 @@ export default function SignUp() {
               </label>
               <input
                 type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 placeholder="Enter email address"
-                className="w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                className={`w-full border bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-blue-100 transition ${
+                  errors.email
+                    ? "border-red-400"
+                    : "border-slate-300 focus:border-blue-500"
+                }`}
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="Create a password"
-                className="w-full border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Create a password"
+                  className={`w-full border bg-white px-4 py-3 pr-11 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-blue-100 transition ${
+                    errors.password
+                      ? "border-red-400"
+                      : "border-slate-300 focus:border-blue-500"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+              )}
             </div>
 
             <div className="flex items-start gap-2">
               <input
                 type="checkbox"
                 id="terms"
+                name="terms"
+                checked={form.terms}
+                onChange={handleChange}
                 className="w-4 h-4 accent-blue-600 mt-0.5 flex-shrink-0"
               />
-              <label
-                htmlFor="terms"
-                className="text-sm text-slate-600 leading-snug"
-              >
-                I agree to the{" "}
-                <Link
-                  href="#"
-                  className="text-blue-600 font-semibold hover:underline"
+              <div>
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-slate-600 leading-snug"
                 >
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link
-                  href="#"
-                  className="text-blue-600 font-semibold hover:underline"
-                >
-                  Privacy Policy
-                </Link>
-              </label>
+                  I agree to the{" "}
+                  <Link
+                    href="#"
+                    className="text-blue-600 font-semibold hover:underline"
+                  >
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link
+                    href="#"
+                    className="text-blue-600 font-semibold hover:underline"
+                  >
+                    Privacy Policy
+                  </Link>
+                </label>
+                {errors.terms && (
+                  <p className="mt-0.5 text-xs text-red-500">{errors.terms}</p>
+                )}
+              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 text-base transition-colors"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 text-base transition-colors flex items-center justify-center gap-2"
             >
-              Create Account
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
@@ -158,9 +297,12 @@ export default function SignUp() {
             <div className="flex-1 h-px bg-slate-200" />
           </div>
 
-          <div className="flex justify-center" >
-            <button className="flex  border border-slate-300 bg-white py-3 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <div className="flex justify-center">
+            <a
+              href={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:5000"}/api/auth/google`}
+              className="flex items-center gap-2 border border-slate-300 bg-white py-3 px-5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition w-full justify-center"
+            >
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -178,8 +320,8 @@ export default function SignUp() {
                   fill="#EA4335"
                 />
               </svg>
-              Google
-            </button>
+              Continue with Google
+            </a>
           </div>
         </div>
       </div>

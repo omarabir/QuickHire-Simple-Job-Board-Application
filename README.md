@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# QuickHire
+
+A full-stack job-board application built with **Next.js**, **Node/Express**, and **MongoDB**.
+
+---
+
+## Project Structure
+
+```
+QuickHire/
+├── backend/                # Express REST API
+│   ├── models/             # Mongoose models (Job, Application)
+│   ├── routes/             # Route handlers (jobs, applications)
+│   ├── middleware/         # Validation helpers
+│   ├── server.js           # Entry point
+│   ├── .env                # Environment variables (not committed)
+│   └── package.json
+│
+├── src/
+│   ├── app/
+│   │   ├── jobs/           # Job listings page  (/jobs)
+│   │   ├── jobs/[id]/      # Job detail + apply page  (/jobs/:id)
+│   │   ├── admin/          # Admin dashboard  (/admin)
+│   │   ├── login/          # Login page
+│   │   └── signup/         # Sign-up page
+│   ├── components/
+│   │   ├── jobs/           # JobCard, JobSearch, JobFilter, ApplyForm, AdminJobForm
+│   │   ├── authPage/       # login.jsx, signUp.jsx
+│   │   └── ...             # Header, Hero, Footer, etc.
+│   └── lib/
+│       └── api.js          # Fetch helpers for all API calls
+└── .env.local              # NEXT_PUBLIC_API_URL
+```
+
+---
+
+## Prerequisites
+
+- Node.js >= 18
+- MongoDB running locally on port **27017** (or use MongoDB Atlas)
+- npm / yarn
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/omarabir/QuickHire-Simple-Job-Board-Application
+cd QuickHire
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Backend setup
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+cd backend
+cp .env.example .env    # edit values if needed
+npm install
+npm run dev             # starts on http://localhost:5000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### Backend environment variables (backend/.env)
 
-## Learn More
+| Variable   | Default                               | Description         |
+|------------|---------------------------------------|---------------------|
+| PORT       | 5000                                  | Express server port |
+| MONGO_URI  | mongodb://127.0.0.1:27017/quickhire   | MongoDB connection  |
+| CLIENT_URL | http://localhost:3000                 | CORS allowed origin |
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Frontend setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# from repo root
+npm install
+npm run dev             # starts on http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### Frontend environment variables (.env.local)
 
-## Deploy on Vercel
+| Variable            | Default                     | Description          |
+|---------------------|-----------------------------|----------------------|
+| NEXT_PUBLIC_API_URL | http://localhost:5000/api   | Backend API base URL |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Reference
+
+### Jobs
+
+| Method | Endpoint        | Description                                                        |
+|--------|-----------------|--------------------------------------------------------------------|
+| GET    | /api/jobs       | List jobs (params: search, category, location, type, page, limit) |
+| GET    | /api/jobs/:id   | Get single job                                                     |
+| POST   | /api/jobs       | Create a job listing                                               |
+| DELETE | /api/jobs/:id   | Delete a job listing                                               |
+
+**POST /api/jobs body:**
+```json
+{
+  "title": "Senior UI Designer",
+  "company": "Acme Inc.",
+  "location": "New York, NY",
+  "category": "Design",
+  "type": "Full-time",
+  "description": "...",
+  "requirements": "...",
+  "salary": "$80k-$100k"
+}
+```
+
+### Applications
+
+| Method | Endpoint                       | Description                     |
+|--------|--------------------------------|---------------------------------|
+| POST   | /api/applications              | Submit a job application        |
+| GET    | /api/applications              | List all applications (admin)   |
+| GET    | /api/applications/job/:jobId   | Applications for a specific job |
+
+**POST /api/applications body:**
+```json
+{
+  "job": "<jobId>",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "resumeLink": "https://drive.google.com/...",
+  "coverNote": "Optional cover note"
+}
+```
+
+---
+
+## Features
+
+- **Job Listings** - search by keyword, filter by category / type / location, paginated grid
+- **Job Detail** - full description, requirements, salary, inline apply form
+- **Apply Form** - name, email, resume URL, cover note; client + server-side validation
+- **Admin Dashboard** - post new jobs, delete listings, view all applications
+- **Auth Pages** - Login and Sign Up with validation and loading states
+- **Responsive** - mobile-first Tailwind CSS throughout
+- **Landing Page** - hero, categories, featured jobs, latest jobs, CTA, footer
+
+---
+
+## Tech Stack
+
+| Layer      | Tech                                    |
+|------------|-----------------------------------------|
+| Frontend   | Next.js 14, Tailwind CSS, lucide-react  |
+| Backend    | Node.js, Express                        |
+| Database   | MongoDB, Mongoose                       |
+| Validation | Custom middleware + Mongoose validators |

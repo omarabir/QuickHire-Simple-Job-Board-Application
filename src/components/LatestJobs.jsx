@@ -72,61 +72,13 @@ export default function LatestJobs() {
     <section className="w-full py-16 px-6 md:px-16 bg-[#f0f0f8] relative overflow-hidden">
  
       <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-40">
-        <svg width="100%" height="100%" viewBox="0 0 260 260" fill="none">
-          <line
-            x1="260"
-            y1="0"
-            x2="160"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-          <line
-            x1="230"
-            y1="0"
-            x2="130"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-          <line
-            x1="200"
-            y1="0"
-            x2="100"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-        </svg>
-      </div>
-
-      <div className="absolute bottom-0 right-0 w-64 h-64 pointer-events-none opacity-40">
-        <svg width="100%" height="100%" viewBox="0 0 260 260" fill="none">
-          <line
-            x1="260"
-            y1="0"
-            x2="160"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-          <line
-            x1="230"
-            y1="0"
-            x2="130"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-          <line
-            x1="200"
-            y1="0"
-            x2="100"
-            y2="260"
-            stroke="#c7c7e0"
-            strokeWidth="1.5"
-          />
-        </svg>
+        <Image
+                   src="/assests/Pattern.png"
+                   alt="background pattern"
+                   fill
+                   className="object-contain object-right-top scale-150 translate-x-1/4 -translate-y-1/4 opacity-50"
+                   priority
+                 />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
